@@ -19,8 +19,8 @@ This project provides a hands-on tutorial for building a **Stereo Vision** setup
 ## Installation
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/stereo-vision-c270.git
-   cd stereo-vision-c270
+   git clone https://github.com/SIDDHARTH-S-001/Stereo_Vision_Tutorial.git
+   cd Stereo_Vision_Tutorial
    ```
 2. Install the required Python packages:
    ```bash
