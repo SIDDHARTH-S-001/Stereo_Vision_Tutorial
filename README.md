@@ -1,4 +1,5 @@
 # Stereo Vision Tutorial
+(# Note this repo is still under development #)
 
 ## Project Description
 This project provides a hands-on tutorial for building a **Stereo Vision** setup using Logitech C270 webcams. It is aimed at hobbyists, students, and developers interested in learning stereo vision concepts and experimenting with various algorithms.
