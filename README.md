@@ -1,1 +1,1 @@
-# Stereo_Vision_C270
+# Stereo_Vision_Tutorial
