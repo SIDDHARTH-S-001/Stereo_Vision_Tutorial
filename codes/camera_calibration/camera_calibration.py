@@ -3,12 +3,12 @@ import cv2
 import os
 
 # Define the number of corners in the calibration pattern (e.g., a chessboard)
-pattern_size = (7, 3)  # Number of inner corners in x and y directions
+pattern_size = (8, 6)  # Number of inner corners in x and y directions
 
 # Create arrays to store object points and image points from all images
 obj_points = []  # 3D points in real world space
 img_points = []  # 2D points in image plane
-images_folder = "images"
+images_folder = "images_left"
 
 # Prepare object points, like (0,0,0), (1,0,0), (2,0,0), ..., (6,5,0)
 objp = np.zeros((np.prod(pattern_size), 3), dtype=np.float32)
@@ -47,7 +47,7 @@ if len(obj_points) > 0:
     print(dist)
 
     # Save camera matrix and distortion coefficients to a text file
-    np.savetxt("camera_matrix.txt", mtx)
-    np.savetxt("distortion_coefficients.txt", dist)
+    np.savetxt("camera_matrix_left.txt", mtx)
+    np.savetxt("distortion_coefficients_left.txt", dist)
 else:
     print("No images to calibrate.")
