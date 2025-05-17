@@ -7,7 +7,7 @@ if not os.path.exists(images_folder):
     os.makedirs(images_folder)
 
 # Capture video from webcam
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 while True:
     ret, frame = cap.read()
