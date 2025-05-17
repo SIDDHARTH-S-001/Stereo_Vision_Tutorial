@@ -1,47 +1,63 @@
 import cv2
+import time
+import numpy as np
+import os
 
-# Try to open both cameras using DirectShow backend
-cam0 = cv2.VideoCapture(0, cv2.CAP_ANY)
-cam1 = cv2.VideoCapture(-1, cv2.CAP_ANY)
+def reset_usb_port(port_id="2.1.4"):
+    try:
+        os.system(f"echo '2-{port_id}' | sudo tee /sys/bus/usb/drivers/usb/unbind")
+        time.sleep(2)
+        os.system(f"echo '2-{port_id}' | sudo tee /sys/bus/usb/drivers/usb/bind")
+        time.sleep(3)
+        return True
+    except:
+        return False
 
-# Set lower resolution and FPS to avoid bandwidth issues
-for cam in (cam0, cam1):
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-    cam.set(cv2.CAP_PROP_FPS, 15)
+def main():
+    # Camera config
+    DEVICE = '/dev/video0'
+    WIDTH, HEIGHT = 320, 240
+    FPS = 10
+    
+    while True:
+        print(f"Initializing {DEVICE}...")
+        cap = cv2.VideoCapture(DEVICE, cv2.CAP_V4L2)
+        
+        if cap.isOpened():
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
+            cap.set(cv2.CAP_PROP_FPS, FPS)
+            cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M','J','P','G'))
+            cap.set(cv2.CAP_PROP_BUFFERSIZE, 2)
+            
+            last_valid = np.zeros((HEIGHT, WIDTH, 3), dtype=np.uint8)
+            error_count = 0
+            
+            while True:
+                ret, frame = cap.read()
+                
+                if not ret or frame is None:
+                    error_count += 1
+                    print(f"Error {error_count}/5")
+                    frame = last_valid
+                    
+                    if error_count >= 5:
+                        print("Reinitializing...")
+                        break
+                else:
+                    error_count = 0
+                    last_valid = frame.copy()
+                
+                cv2.imshow('CAM1', frame)
+                if cv2.waitKey(1) == ord('q'):
+                    cap.release()
+                    cv2.destroyAllWindows()
+                    return
+                
+            cap.release()
+        else:
+            print("Open failed, retrying...")
+            time.sleep(2)
 
-# Check if cameras are opened
-if not cam0.isOpened():
-    print("❌ Camera 0 failed to open.")
-if not cam1.isOpened():
-    print("❌ Camera 1 failed to open.")
-
-if not cam0.isOpened() or not cam1.isOpened():
-    print("⚠️ Exiting: One or both cameras could not be opened.")
-    cam0.release()
-    cam1.release()
-    cv2.destroyAllWindows()
-    exit()
-
-# Main loop
-while True:
-    ret0, frame0 = cam0.read()
-    ret1, frame1 = cam1.read()
-
-    if ret0:
-        cv2.imshow('Cam 0', frame0)
-    else:
-        print("⚠️ Failed to read from Cam 0")
-
-    if ret1:
-        cv2.imshow('Cam 1', frame1)
-    else:
-        print("⚠️ Failed to read from Cam 1")
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Release resources
-cam0.release()
-cam1.release()
-cv2.destroyAllWindows()
+if __name__ == "__main__":
+    main()
