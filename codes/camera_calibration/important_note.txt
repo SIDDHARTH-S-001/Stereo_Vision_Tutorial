@@ -1,0 +1,5 @@
+If you want to run both webcams simulaneously, not face bandwidth issues, switch to MJEPG (Stereo Vision Webcam Problem)
+v4l2-ctl -d /dev/video0 --set-fmt-video=width=640,height=480,pixelformat=MJPG
+v4l2-ctl -d /dev/video2 --set-fmt-video=width=640,height=480,pixelformat=MJPG
+
+Allocate window size, bandwidth and fps manually.
